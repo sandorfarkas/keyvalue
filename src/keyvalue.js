@@ -6,8 +6,8 @@ function wtf(thing) { console.log('wtf', thing); return thing; }
 
 function Keyvalue({ _gateway = gateway } = {}) {
 	return {
-		async createNew() {
-			return {};
+		async createNew(key) {
+			return `{token}/${key}`;
 		},
 
 		async registerKey(key) {

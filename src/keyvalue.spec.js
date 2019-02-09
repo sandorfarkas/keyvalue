@@ -1,12 +1,13 @@
 const Keyvalue = require('./keyvalue');
+const keyvalue = Keyvalue();
 
 test('Create new should return new token and key if the request is successful', async () => {
-		const keyvalue = Keyvalue();
+		const TEST_KEY = "test-key";
 
-		const response = await keyvalue.createNew();
+		const response = await keyvalue.createNew(TEST_KEY);
 		console.log(response);
 
-		expect(response).toEqual({});
+		expect(response).toEqual(`{token}/${TEST_KEY}`);
 });
 
 /*
