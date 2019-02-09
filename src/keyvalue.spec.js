@@ -1,9 +1,15 @@
-const expect = require('chai').expect;
 const Keyvalue = require('./keyvalue');
 
-describe('Keyvalue', function() {
-	it('registerKey should return status ')
+test('Create new should return new token and key if the request is successful', async () => {
+		const keyvalue = Keyvalue();
 
+		const response = await keyvalue.createNew();
+		console.log(response);
+
+		expect(response).toEqual({});
+});
+
+/*
 	it('registerKey should return status 409 when gateway returns status 409', async () => {
 		const mockGateway = function mockGateway() {
 			return {
@@ -20,5 +26,4 @@ describe('Keyvalue', function() {
 		const response = await keyvalue.registerKey();
 		
 		expect(response.status).to.equal(409);
-	});
-});
+	});*/

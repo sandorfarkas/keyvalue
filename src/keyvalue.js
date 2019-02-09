@@ -6,6 +6,10 @@ function wtf(thing) { console.log('wtf', thing); return thing; }
 
 function Keyvalue({ _gateway = gateway } = {}) {
 	return {
+		async createNew() {
+			return {};
+		},
+
 		async registerKey(key) {
 			let gatewayResponse = await _gateway.registerKey(key);
 			console.log(gatewayResponse);
