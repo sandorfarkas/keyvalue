@@ -1,0 +1,30 @@
+{
+  "name": "keyvalue",
+  "version": "1.0.0",
+  "description": "Keyvalue store",
+  "private": true,
+  "scripts": {
+    "start": "webpack --config webpack.config.js",
+    "start1": "node src/index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.topdesk.com:SandorF/keyvalue.git"
+  },
+  "author": "Sandor Farkas",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "babel-loader": "^8.0.4",
+    "chai": "^4.2.0",
+    "sinon": "^7.1.1",
+    "webpack": "^4.26.0",
+    "webpack-cli": "^3.1.2"
+  }
+}
