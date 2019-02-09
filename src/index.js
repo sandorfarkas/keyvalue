@@ -10,8 +10,12 @@ app.use(express.json());
 app.post('/new/:key', async (req, res) => {
   const key = req.params.key;
   console.log(`Request key: ${key}`);
+  
   const response = await keyvalue.registerKey(key);
   res.status(response.status).send();
+  
+  res.setHeader('Content-Type', 'application/json');
+  res.status(201).send(JSON.stringify(response));
 });
 
 app.post('/:token/:key', (req, res) => {
