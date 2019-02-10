@@ -4,8 +4,7 @@
   "description": "Keyvalue store",
   "private": true,
   "scripts": {
-    "start": "webpack --config webpack.config.js",
-    "start1": "node src/index.js",
+    "start": "node src/index.js",
     "test": "jest"
   },
   "repository": {
