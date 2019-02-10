@@ -46,7 +46,3 @@ app.get('/version', async (req, res) => {
 app.listen(port, () => {
   console.log(`Keyvalue listening on port ${port}!`);
 });
-
-function f() {
-	return crypto.randomBytes(48).toString('hex');
-}

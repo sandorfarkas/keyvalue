@@ -1,37 +1,47 @@
 const Keyvalue = require('./keyvalue');
 
-test('Create new should return new token and key if the request is successful', async () => {
-		const TEST_KEY = "test-key";
-		const TEST_TOKEN = "test-token";
-		const mockToken = () => {
-			return {
-				createNew() {
-					return TEST_TOKEN;
-				}
-			}
+const TEST_KEY = "test-key";
+const TEST_TOKEN = "test-token";
+const INVALID_KEYS = [];
+const mockToken = () => {
+	return {
+		createNew() {
+			return TEST_TOKEN;
 		}
-		const keyvalue = Keyvalue(mockToken);
+	}
+}
+const keyvalue = Keyvalue(mockToken);
 
-		const response = await keyvalue.createNew(TEST_KEY);
-
-		expect(response).toEqual(`${TEST_TOKEN}/${TEST_KEY}`);
+beforeAll(() => {
+	INVALID_KEYS.push(".invalid-key");
+	INVALID_KEYS.push("$invalid-key");
+	INVALID_KEYS.push("#invalid-key");
+	INVALID_KEYS.push("[invalid-key");
+	INVALID_KEYS.push("]invalid-key");
+	INVALID_KEYS.push("/invalid-key");
+	for (let i = 0; i < 32; i++) {
+		INVALID_KEYS.push(String.fromCharCode(i) + "invalid-key");
+	}
+	INVALID_KEYS.push(String.fromCharCode(127) + "invalid-key");
 });
 
-/*
-	it('registerKey should return status 409 when gateway returns status 409', async () => {
-		const mockGateway = function mockGateway() {
-			return {
-				registerKey(key) {
-					let response = {
-						status: 409
-					}
-					return response;
-				}	
-			}
-		}
-		const keyvalue = Keyvalue({ _gateway: mockGateway() });
-		
-		const response = await keyvalue.registerKey();
-		
-		expect(response.status).to.equal(409);
-	});*/
+test('Create new should return new token and key if the request is successful', () => {
+	const response = keyvalue.createNew(TEST_KEY);
+
+	expect(response).toEqual(`${TEST_TOKEN}/${TEST_KEY}`);
+});
+
+test('Create new should return empty object when key is invalid', () => {
+	INVALID_KEYS.forEach((key) => {
+		let response = keyvalue.createNew(key);
+		expect(response).toEqual({});
+	});
+});
+
+test('Validate key should return false if key contains invalid characters', () => {	
+	INVALID_KEYS.forEach(key =>	expect(keyvalue.validateKey(key)).toBe(false));
+});
+
+test('Validate key should return true if key does not contain invalid characters', () => {	
+	expect(keyvalue.validateKey(TEST_KEY)).toBe(true);
+});
