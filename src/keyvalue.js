@@ -1,10 +1,15 @@
-const gateway = require('./gateway');
-
 module.exports = Keyvalue;
 
-function wtf(thing) { console.log('wtf', thing); return thing; }
+function Keyvalue(Token) {
+	return {
+		async createNew(key) {
+			const newToken = Token().createNew();
+			return `${newToken}/${key}`;
+		}
+	}
+}
 
-function Keyvalue({ _gateway = gateway } = {}) {
+/*function Keyvalue({ _gateway = gateway } = {}) {
 	return {
 		async createNew(key) {
 			return `{token}/${key}`;
@@ -36,4 +41,4 @@ function Keyvalue({ _gateway = gateway } = {}) {
 			return await _gateway.getVersion();
 		}
 	};
-}
+}*/

@@ -1,18 +1,17 @@
-const crypto = require('crypto');
 const express = require('express');
 const app = express();
 const port = 3000;
+
+const Token = require('./token');
 const Keyvalue = require('./keyvalue');
-const keyvalue = Keyvalue();
+const keyvalue = Keyvalue(Token);
 
 app.use(express.json());
 
 app.post('/new/:key', async (req, res) => {
   const key = req.params.key;
-  console.log(`Request key: ${key}`);
   
-  const response = await keyvalue.registerKey(key);
-  res.status(response.status).send();
+  const response = await keyvalue.createNew(key);
   
   res.setHeader('Content-Type', 'application/json');
   res.status(201).send(JSON.stringify(response));
