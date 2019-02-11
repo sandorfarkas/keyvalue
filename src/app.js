@@ -11,7 +11,11 @@ app.post('/new/:key', async (req, res) => {
   
   const response = await keyvalue.createNew(key);
   
-  res.status(201).send(`${config.url}:${config.port}/` + response);
+  if (response.token == undefined) {
+    res.status(400).send("Invalid key.");  
+  } else {
+    res.status(201).send(`${config.url}:${config.port}/${response.token}/${response.key}`);
+  }  
 });
 
 app.post('/:token/:key', (req, res) => {

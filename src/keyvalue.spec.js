@@ -28,7 +28,7 @@ beforeAll(() => {
 test('Create new should return new token and key if the request is successful', () => {
 	const response = keyvalue.createNew(TEST_KEY);
 
-	expect(response).toEqual(`${TEST_TOKEN}/${TEST_KEY}`);
+	expect(response).toEqual({ token: TEST_TOKEN, key: TEST_KEY });
 });
 
 test('Create new should return empty object when key is invalid', () => {

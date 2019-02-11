@@ -1,8 +1,11 @@
 function Keyvalue(Token) {
 	return {
 		createNew(key) {
+			if (!this.validateKey(key)) {
+				return {};
+			}
 			const newToken = Token().createNew();
-			return this.validateKey(key) ? `${newToken}/${key}` : {};
+			return { token: newToken, key: key };
 		},
 		validateKey(key) {
 			for (const c of key) {
