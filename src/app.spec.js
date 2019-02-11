@@ -7,8 +7,6 @@ const INVALID_KEY = ".invalid-key";
 
 test('/new/:key should respond with status 201 when key is valid', (done) => {
   request(app).post(`/new/${KEY_TO_CREATE}`).then((response) => {
-    const receivedText = response.res.text;
-
     expect(response.res.statusCode).toBe(201);
     done();
   });
