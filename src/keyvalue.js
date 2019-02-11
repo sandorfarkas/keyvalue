@@ -1,5 +1,3 @@
-module.exports = Keyvalue;
-
 function Keyvalue(Token) {
 	return {
 		createNew(key) {
@@ -19,3 +17,5 @@ function isInvalidChar(char) {
 	const charCode = char.charCodeAt(0);
 	return char == "." || char == "$" || char == "#" || char == "[" || char == "]" || char == "/" || (charCode >= 0 && charCode <= 31) || charCode == 127;
 }
+
+module.exports = Keyvalue;

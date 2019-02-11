@@ -1,20 +1,17 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const { config } = require('./config');
 
 const Token = require('./token');
 const Keyvalue = require('./keyvalue');
 const keyvalue = Keyvalue(Token);
-
-app.use(express.json());
 
 app.post('/new/:key', async (req, res) => {
   const key = req.params.key;
   
   const response = await keyvalue.createNew(key);
   
-  res.setHeader('Content-Type', 'application/json');
-  res.status(201).send(JSON.stringify(response));
+  res.status(201).send(`${config.url}:${config.port}/` + response);
 });
 
 app.post('/:token/:key', (req, res) => {
@@ -43,6 +40,4 @@ app.get('/version', async (req, res) => {
   res.send(await keyvalue.getCouchDBVersion());
 });
 
-app.listen(port, () => {
-  console.log(`Keyvalue listening on port ${port}!`);
-});
+module.exports = app;
