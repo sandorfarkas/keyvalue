@@ -3,8 +3,9 @@ const app = express();
 const { config } = require('./config');
 
 const Token = require('./token');
+const Store = require('./store');
 const Keyvalue = require('./keyvalue');
-const keyvalue = Keyvalue(Token);
+const keyvalue = Keyvalue(Token, Store());
 
 app.post('/new/:key', async (req, res) => {
   const key = req.params.key;

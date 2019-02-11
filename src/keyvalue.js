@@ -1,11 +1,13 @@
-function Keyvalue(Token) {
+function Keyvalue(Token, store) {
 	return {
 		createNew(key) {
 			if (!this.validateKey(key)) {
 				return {};
 			}
 			const newToken = Token().createNew();
-			return { token: newToken, key: key };
+			const entry = { token: newToken, key: key };
+			store.add(entry);
+			return entry;
 		},
 		validateKey(key) {
 			for (const c of key) {
