@@ -4,7 +4,7 @@ const { config } = require('./config');
 
 const KEY_TO_CREATE = "key-to-create";
 
-test('/new/:key should respond with url includeing token and key', (done) => {
+test('/new/:key should respond with url including token and key', (done) => {
   request(app).post(`/new/${KEY_TO_CREATE}`).then((response) => {
     const receivedText = response.res.text;
 
