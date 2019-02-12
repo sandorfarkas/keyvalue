@@ -32,10 +32,11 @@ describe('Create new', () => {
 		});
 	});
 	
+	// Replace with verify store.add
 	test('should add new token and key to db', () => {
 		keyvalue.createNew(TEST_KEY);
-		// TODO empty db before each test
-		expect(store.getSize()).toBe(2);
+
+		expect(store.getSize()).toBe(1);
 	});
 });
 

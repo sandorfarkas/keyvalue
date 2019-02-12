@@ -1,13 +1,17 @@
-module.exports = Store;
-
 function Store() {
   return {
-    db: [],
+    db: new Map(),
     add(entry) {
-      this.db.push(entry);
+      this.db.set(`${entry.token}:${entry.key}`, entry);
+    },
+    get(token, key) {
+      entry = this.db.get(`${token}:${key}`);
+      return (entry == undefined) ? {} : entry;
     },
     getSize() {
-      return this.db.length;
+      return this.db.size;
     }
   }
 }
+
+module.exports = Store;
