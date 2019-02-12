@@ -1,5 +1,5 @@
+const sinon = require('sinon');
 const Keyvalue = require('./keyvalue');
-const Store = require('./store');
 
 const TEST_KEY = "test-key";
 const TEST_TOKEN = "test-token";
@@ -11,7 +11,13 @@ const mockToken = () => {
 		}
 	}
 }
-const store = Store();
+const mockStore = () => {
+  return {
+		add() {
+		}
+	}
+}
+const store = mockStore();
 const keyvalue = Keyvalue(mockToken, store);
 
 beforeAll(() => {
@@ -32,11 +38,12 @@ describe('Create new', () => {
 		});
 	});
 	
-	// Replace with verify store.add
 	test('should add new token and key to db', () => {
+		const storeAddSpy = sinon.spy(store, 'add');
 		keyvalue.createNew(TEST_KEY);
 
-		expect(store.getSize()).toBe(1);
+		expect(storeAddSpy.callCount).toBe(1);
+		storeAddSpy.restore();
 	});
 });
 
