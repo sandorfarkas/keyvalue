@@ -39,8 +39,17 @@ describe("/new/:key", () => {
 
 describe('/:token/:key', () => {
   test('should respond with status 200 when entry can be saved', (done) => {
-    request(app).post(`/${TEST_TOKEN}/${TEST_KEY}`).send(TEST_VALUE).then((response) => {
+    request(app).post(`/${TEST_TOKEN}/${TEST_KEY}`).type( 'text/html' ).send(TEST_VALUE).then((response) => {
       expect(response.res.statusCode).toBe(200);
+      done();
+    });
+  });
+
+  test('should respond with value when entry can be saved', (done) => {
+    request(app).post(`/${TEST_TOKEN}/${TEST_KEY}`).send(TEST_VALUE).then((response) => {
+      const receivedText = response.res.text;
+      
+      expect(receivedText).toBe(TEST_VALUE);
       done();
     });
   });
