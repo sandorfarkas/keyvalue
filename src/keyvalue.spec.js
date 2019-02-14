@@ -4,6 +4,16 @@ const Keyvalue = require('./keyvalue');
 const TEST_KEY = "test-key";
 const TEST_TOKEN = "test-token";
 const INVALID_KEYS = [];
+const TEST_INVALID_ENTRY = {
+	token: "test-token",
+	key: ".invalid-key",
+	value: "test-value"
+}
+const TEST_ENTRY = {
+	token: "test-token",
+	key: "test-key",
+	value: "test-value"
+}
 const mockToken = () => {
 	return {
 		createNew() {
@@ -47,13 +57,23 @@ describe('Create new', () => {
 	});
 });
 
-describe('validate key', () => {
-	test('Validate key should return false if key contains invalid characters', () => {	
-		INVALID_KEYS.forEach(key =>	expect(keyvalue.validateKey(key)).toBe(false));
+describe('Is valid key', () => {
+	test('should return false if key contains invalid characters', () => {	
+		INVALID_KEYS.forEach(key =>	expect(keyvalue.isValidKey(key)).toBe(false));
 	});
 	
-	test('Validate key should return true if key does not contain invalid characters', () => {	
-		expect(keyvalue.validateKey(TEST_KEY)).toBe(true);
+	test('should return true if key does not contain invalid characters', () => {	
+		expect(keyvalue.isValidKey(TEST_KEY)).toBe(true);
+	});
+});
+
+describe('Save entry', () => {
+	test('should return empty object when key is invalid', () => {
+		expect(keyvalue.saveEntry(TEST_INVALID_ENTRY)).toEqual({});
+	});
+
+	test('should return entry when it can be saved', () => {
+		expect(keyvalue.saveEntry(TEST_ENTRY)).toEqual(TEST_ENTRY);
 	});
 });
 

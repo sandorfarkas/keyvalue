@@ -10,10 +10,10 @@ const keyvalue = Keyvalue(Token, Store());
 
 app.use(bodyParser.text({type: '*/*'}));
 
-app.post('/new/:key', async (req, res) => {
+app.post('/new/:key', (req, res) => {
   const key = req.params.key;
   
-  const response = await keyvalue.createNew(key);
+  const response = keyvalue.createNew(key);
   
   if (response.token == undefined) {
     res.status(400).send("Invalid key");
@@ -23,11 +23,19 @@ app.post('/new/:key', async (req, res) => {
 });
 
 app.post('/:token/:key', (req, res) => {
-  const token = req.params.token;
-  const key = req.params.key;
-  const value = req.body;
-  
-  res.status(200).send(value);
+  const entry = {
+    token: req.params.token,
+    key: req.params.key,
+    value: req.body
+  }
+
+  const response = keyvalue.saveEntry(entry);
+
+  if (response.value == undefined) {
+    res.status(400).send();  
+  } else {
+    res.status(200).send(entry.value);
+  }  
 });
 
 app.post('/:token/:key/:value', (req, res) => {

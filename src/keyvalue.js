@@ -1,7 +1,7 @@
 function Keyvalue(Token, store) {
 	return {
 		createNew(key) {
-			if (!this.validateKey(key)) {
+			if (!this.isValidKey(key)) {
 				return {};
 			}
 			const newToken = Token().createNew();
@@ -9,7 +9,13 @@ function Keyvalue(Token, store) {
 			store.add(entry);
 			return entry;
 		},
-		validateKey(key) {
+		saveEntry(entry) {
+			if (!this.isValidKey(entry.key)) {
+				return {};
+			}
+			return entry;
+		},
+		isValidKey(key) {
 			for (const c of key) {
 				if (isInvalidChar(c)) return false;
 			}			
