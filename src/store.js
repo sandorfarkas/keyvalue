@@ -10,6 +10,9 @@ function Store() {
     },
     getSize() {
       return this.db.size;
+    },
+    contains(entry) {
+      return (this.db.get(`${entry.token}:${entry.key}`) == undefined) ? false : true;
     }
   }
 }

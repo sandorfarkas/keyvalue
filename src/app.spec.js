@@ -38,23 +38,27 @@ describe("/new/:key", () => {
 });
 
 describe('/:token/:key', () => {
-  test('Check params', () => {
-    // TODO
-  });
-
   test('should respond with status 200 when entry can be saved', (done) => {
-    request(app).post(`/${TEST_TOKEN}/${TEST_KEY}`).send(TEST_VALUE).then((response) => {
-      expect(response.res.statusCode).toBe(200);
-      done();
+    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
+      const responseUrl = response.res.text;
+      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+      request(app).post(tokenAndKey).send(TEST_VALUE).then((response) => {
+        expect(response.res.statusCode).toBe(200);
+        done();
+      });
     });
   });
 
   test('should respond with value when entry can be saved', (done) => {
-    request(app).post(`/${TEST_TOKEN}/${TEST_KEY}`).send(TEST_VALUE).then((response) => {
-      const receivedText = response.res.text;
+    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
+      const responseUrl = response.res.text;
+      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+      request(app).post(tokenAndKey).send(TEST_VALUE).then((response) => {
+        const receivedText = response.res.text;
       
-      expect(receivedText).toBe(TEST_VALUE);
-      done();
+        expect(receivedText).toBe(TEST_VALUE);
+        done();
+      });
     });
   });
 

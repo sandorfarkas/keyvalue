@@ -4,16 +4,6 @@ const Keyvalue = require('./keyvalue');
 const TEST_KEY = "test-key";
 const TEST_TOKEN = "test-token";
 const INVALID_KEYS = [];
-const TEST_INVALID_ENTRY = {
-	token: "test-token",
-	key: ".invalid-key",
-	value: "test-value"
-}
-const TEST_ENTRY = {
-	token: "test-token",
-	key: "test-key",
-	value: "test-value"
-}
 const mockToken = () => {
 	return {
 		createNew() {
@@ -24,6 +14,8 @@ const mockToken = () => {
 const mockStore = () => {
   return {
 		add() {
+		},
+		contains() {
 		}
 	}
 }
@@ -69,11 +61,41 @@ describe('Is valid key', () => {
 
 describe('Save entry', () => {
 	test('should return empty object when key is invalid', () => {
-		expect(keyvalue.saveEntry(TEST_INVALID_ENTRY)).toEqual({});
+		const invalidEntry = {
+			token: "test-token",
+			key: ".invalid-key",
+			value: "test-value"
+		}
+		
+		expect(keyvalue.saveEntry(invalidEntry)).toEqual({});
 	});
 
-	test('should return entry when it can be saved', () => {
-		expect(keyvalue.saveEntry(TEST_ENTRY)).toEqual(TEST_ENTRY);
+	test('should return empty object when value is empty', () => {
+		const entryWithEmptyValue = {
+			token: "test-token",
+			key: "test-key",
+			value: ""
+		}
+
+		expect(keyvalue.saveEntry(entryWithEmptyValue)).toEqual({});
+	});
+
+	test('should return empty object when token/key is not in db', () => {
+		const entryNotInDb = {
+			token: "test-token-not-in-db",
+			key: "test-key-not-in-db",
+			value: "test-value-not-in-db"
+		}
+
+		expect(keyvalue.saveEntry(entryNotInDb)).toEqual({});
+	});
+
+	test('should call store contains', () => {
+		const storeAddSpy = sinon.spy(store, 'contains');
+		keyvalue.saveEntry({ token: TEST_TOKEN, key: TEST_KEY, value: "test-value"});
+
+		expect(storeAddSpy.callCount).toBe(1);
+		storeAddSpy.restore();
 	});
 });
 

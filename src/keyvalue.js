@@ -10,7 +10,7 @@ function Keyvalue(Token, store) {
 			return entry;
 		},
 		saveEntry(entry) {
-			if (!this.isValidKey(entry.key)) {
+			if (!this.isValidKey(entry.key) || !entry.value || !store.contains(entry) ) {
 				return {};
 			}
 			return entry;
