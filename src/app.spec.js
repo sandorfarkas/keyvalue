@@ -70,3 +70,35 @@ describe('/:token/:key', () => {
   });
 });
 
+describe('/:token/:key/:value', () => {
+  test('should respond with status 200 when entry can be saved', (done) => {
+    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
+      const responseUrl = response.res.text;
+      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+      request(app).post(`${tokenAndKey}/TEST_VALUE`).send().then((response) => {
+        expect(response.res.statusCode).toBe(200);
+        done();
+      });
+    });
+  });
+
+  test('should respond with value when entry can be saved', (done) => {
+    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
+      const responseUrl = response.res.text;
+      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+      request(app).post(`${tokenAndKey}/${TEST_VALUE}`).send().then((response) => {
+        const receivedText = response.res.text;
+      
+        expect(receivedText).toBe(TEST_VALUE);
+        done();
+      });
+    });
+  });
+
+  test('should respond with status 400 when entry can not be saved', (done) => {
+    request(app).post(`/${TEST_TOKEN}/${INVALID_KEY}`).send(TEST_VALUE).then((response) => {
+      expect(response.res.statusCode).toBe(400);
+      done();
+    });
+  });
+});

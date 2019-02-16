@@ -35,14 +35,23 @@ app.post('/:token/:key', (req, res) => {
     res.status(400).send();  
   } else {
     res.status(200).send(entry.value);
-  }  
+  }
 });
 
 app.post('/:token/:key/:value', (req, res) => {
-  const token = req.params.token;
-  const key = req.params.key;
-  const value = req.params.value;
-  res.send(keyvalue.storeValue(token, key, value));
+  const entry = {
+    token: req.params.token,
+    key: req.params.key,
+    value: req.params.value
+  }
+
+  const response = keyvalue.saveEntry(entry);
+
+  if (response.value == undefined) {
+    res.status(400).send();  
+  } else {
+    res.status(200).send(entry.value);
+  }
 });
 
 app.get('/:token/:key', (req, res) => {
