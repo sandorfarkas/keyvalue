@@ -57,13 +57,14 @@ app.post('/:token/:key/:value', (req, res) => {
 app.get('/:token/:key', (req, res) => {
   const token = req.params.token;
   const key = req.params.key;
-  // TODO token == new
-  res.send(keyvalue.getValue(token, key));
-});
+  
+  const response = keyvalue.getEntry({ token: token, key: key });
 
-app.get('/version', async (req, res) => {
-  console.log('Get CouchDB version');
-  res.send(await keyvalue.getCouchDBVersion());
+  if (response == {}) {
+    res.status(400).send();
+  } else {
+    res.status(200).send(response.value);
+  }
 });
 
 module.exports = app;

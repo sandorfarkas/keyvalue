@@ -11,20 +11,35 @@ const mockToken = () => {
 		}
 	}
 }
-const mockStore = () => {
+let mockStore = () => {
   return {
 		add() {
 		},
 		contains() {
+			return true;
 		}
 	}
 }
-const store = mockStore();
-const keyvalue = Keyvalue(mockToken, store);
+let store = mockStore();
+let keyvalue = Keyvalue(mockToken, store);
 
 beforeAll(() => {
 	createInvalidKeys();
 });
+
+beforeEach(() => {
+	mockStore = () => {
+		return {
+			add() {
+			},
+			contains() {
+				return true;
+			}
+		}
+	}
+	store = mockStore();
+	keyvalue = Keyvalue(mockToken, store);
+})
 
 describe('Create new', () => {
 	test('should return new token and key if the request is successful', () => {
@@ -81,6 +96,18 @@ describe('Save entry', () => {
 	});
 
 	test('should return empty object when token/key is not in db', () => {
+		mockStore = () => {
+			return {
+				add() {
+				},
+				contains() {
+					return false;
+				}
+			}
+		}
+		store = mockStore();
+		keyvalue = Keyvalue(mockToken, store);
+		
 		const entryNotInDb = {
 			token: "test-token-not-in-db",
 			key: "test-key-not-in-db",
@@ -96,6 +123,57 @@ describe('Save entry', () => {
 
 		expect(storeAddSpy.callCount).toBe(1);
 		storeAddSpy.restore();
+	});
+
+	test('should call store add', () => {
+		const storeAddSpy = sinon.spy(store, 'add');
+		keyvalue.saveEntry({ token: TEST_TOKEN, key: TEST_KEY, value: "test-value"});
+
+		expect(storeAddSpy.callCount).toBe(1);
+		storeAddSpy.restore();
+	});
+});
+
+describe('Get entry', () => {
+  test('should return empty object if token and key are not in db', () => {
+		mockStore = () => {
+			return {
+				add() {
+				},
+				contains() {
+					return false;
+				},
+				get() {
+				}
+			}
+		}
+		store = mockStore();
+		keyvalue = Keyvalue(mockToken, store);
+
+		expect(keyvalue.getEntry({token: "token-not-in-db", key: "key-not-in-db"})).toEqual({});
+	})
+
+	test('should return value for token and key', () => {
+		const entry = keyvalue.createNew("test-key");
+		entry.value = "test-value";
+		mockStore = () => {
+			return {
+				add() {
+				},
+				contains() {
+					return true;
+				},
+				get() {
+					return entry;
+				}
+			}
+		}
+		store = mockStore();
+		keyvalue = Keyvalue(mockToken, store);
+
+		keyvalue.saveEntry(entry);
+
+		expect(keyvalue.getEntry(entry)).toBe(entry);
 	});
 });
 

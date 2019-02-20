@@ -75,7 +75,7 @@ describe('/:token/:key/:value', () => {
     request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
       const responseUrl = response.res.text;
       const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
-      request(app).post(`${tokenAndKey}/TEST_VALUE`).send().then((response) => {
+      request(app).post(`${tokenAndKey}/${TEST_VALUE}`).send().then((response) => {
         expect(response.res.statusCode).toBe(200);
         done();
       });
@@ -99,6 +99,25 @@ describe('/:token/:key/:value', () => {
     request(app).post(`/${TEST_TOKEN}/${INVALID_KEY}`).send(TEST_VALUE).then((response) => {
       expect(response.res.statusCode).toBe(400);
       done();
+    });
+  });
+});
+
+describe('Get /:token/:key', () => {
+  test('should return value when the right token is provided', () => {
+    let tokenAndKey;
+    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
+      const responseUrl = response.res.text;
+      tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+      
+      request(app).post(`${tokenAndKey}/${TEST_VALUE}`).send().then((response) => {
+                
+        request(app).get(`${tokenAndKey}`).then((response) => {
+          const receivedText = response.res.text;
+          
+          expect(receivedText).toEqual(TEST_VALUE);
+        }).catch((err) => console.error(err));
+      });
     });
   });
 });
