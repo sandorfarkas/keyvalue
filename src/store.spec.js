@@ -7,7 +7,7 @@ const TEST_ENTRY = {
   value: "test-value"
 }
 
-test('Should have db list', () => {
+test('should have db map', () => {
   expect(store.db).toBeInstanceOf(Map);
 });
 

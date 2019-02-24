@@ -2,32 +2,31 @@ const request = require('supertest');
 const app = require('./app');
 const { config } = require('./config');
 
-const KEY_TO_CREATE = "key-to-create";
-const INVALID_KEY = ".invalid-key";
-const TEST_KEY = "test-key";
+const TEST_KEY = "key-to-create";
 const TEST_TOKEN = "test-token";
 const TEST_VALUE = "test-value";
+const TEST_INVALID_KEY = ".invalid-key";
 
-describe("/new/:key", () => {
+describe("POST /new/:key", () => {
   test('should respond with status 201 when key is valid', (done) => {
-    request(app).post(`/new/${KEY_TO_CREATE}`).then((response) => {
+    request(app).post(`/new/${TEST_KEY}`).then((response) => {
       expect(response.res.statusCode).toBe(201);
       done();
     });
   });
   
   test('should respond with url including token and key', (done) => {
-    request(app).post(`/new/${KEY_TO_CREATE}`).then((response) => {
+    request(app).post(`/new/${TEST_KEY}`).then((response) => {
       const receivedText = response.res.text;
-  
+      
       expect(receivedText.startsWith(`${config.url}:${config.port}/`)).toBeTruthy();
-      expect(receivedText.endsWith(KEY_TO_CREATE)).toBeTruthy();
+      expect(receivedText.endsWith(TEST_KEY)).toBeTruthy();
       done();
     });
   });
   
   test('should respond with status 400 when key is invalid', (done) => {
-    request(app).post(`/new/${INVALID_KEY}`).then((response) => {
+    request(app).post(`/new/${TEST_INVALID_KEY}`).then((response) => {
       const receivedText = response.res.text;
   
       expect(receivedText).toBe("Invalid key");
@@ -37,12 +36,12 @@ describe("/new/:key", () => {
   });
 });
 
-describe('/:token/:key', () => {
+describe('POST /:token/:key', () => {
   test('should respond with status 200 when entry can be saved', (done) => {
-    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
-      const responseUrl = response.res.text;
-      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+    request(app).post(`/new/${TEST_KEY}`).send().then((response) => {
+      const tokenAndKey = getTokenAndKeyFromUrl(response.res.text);
       request(app).post(tokenAndKey).send(TEST_VALUE).then((response) => {
+        
         expect(response.res.statusCode).toBe(200);
         done();
       });
@@ -50,9 +49,9 @@ describe('/:token/:key', () => {
   });
 
   test('should respond with value when entry can be saved', (done) => {
-    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
-      const responseUrl = response.res.text;
-      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+    request(app).post(`/new/${TEST_KEY}`).send().then((response) => {
+      const tokenAndKey = getTokenAndKeyFromUrl(response.res.text);
+      
       request(app).post(tokenAndKey).send(TEST_VALUE).then((response) => {
         const receivedText = response.res.text;
       
@@ -63,19 +62,21 @@ describe('/:token/:key', () => {
   });
 
   test('should respond with status 400 when entry can not be saved', (done) => {
-    request(app).post(`/${TEST_TOKEN}/${INVALID_KEY}`).send(TEST_VALUE).then((response) => {
+    request(app).post(`/${TEST_TOKEN}/${TEST_INVALID_KEY}`).send(TEST_VALUE).then((response) => {
+      
       expect(response.res.statusCode).toBe(400);
       done();
     });
   });
 });
 
-describe('/:token/:key/:value', () => {
+describe('POST /:token/:key/:value', () => {
   test('should respond with status 200 when entry can be saved', (done) => {
-    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
-      const responseUrl = response.res.text;
-      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+    request(app).post(`/new/${TEST_KEY}`).send().then((response) => {
+      const tokenAndKey = getTokenAndKeyFromUrl(response.res.text);
+      
       request(app).post(`${tokenAndKey}/${TEST_VALUE}`).send().then((response) => {
+
         expect(response.res.statusCode).toBe(200);
         done();
       });
@@ -83,9 +84,9 @@ describe('/:token/:key/:value', () => {
   });
 
   test('should respond with value when entry can be saved', (done) => {
-    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
-      const responseUrl = response.res.text;
-      const tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+    request(app).post(`/new/${TEST_KEY}`).send().then((response) => {
+      const tokenAndKey = getTokenAndKeyFromUrl(response.res.text);
+      
       request(app).post(`${tokenAndKey}/${TEST_VALUE}`).send().then((response) => {
         const receivedText = response.res.text;
       
@@ -96,28 +97,40 @@ describe('/:token/:key/:value', () => {
   });
 
   test('should respond with status 400 when entry can not be saved', (done) => {
-    request(app).post(`/${TEST_TOKEN}/${INVALID_KEY}`).send(TEST_VALUE).then((response) => {
+    request(app).post(`/${TEST_TOKEN}/${TEST_INVALID_KEY}/${TEST_VALUE}`).send().then((response) => {
+      
       expect(response.res.statusCode).toBe(400);
       done();
     });
   });
 });
 
-describe('Get /:token/:key', () => {
-  test('should return value when the right token is provided', () => {
-    let tokenAndKey;
-    request(app).post(`/new/${KEY_TO_CREATE}`).send().then((response) => {
-      const responseUrl = response.res.text;
-      tokenAndKey = responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+describe('GET /:token/:key', () => {
+  test('should return value when the right token is provided', (done) => {
+    request(app).post(`/new/${TEST_KEY}`).send().then((response) => {
+      const tokenAndKey = getTokenAndKeyFromUrl(response.res.text);
       
-      request(app).post(`${tokenAndKey}/${TEST_VALUE}`).send().then((response) => {
+      request(app).post(`${tokenAndKey}/${TEST_VALUE}`).send().then(() => {
                 
         request(app).get(`${tokenAndKey}`).then((response) => {
           const receivedText = response.res.text;
           
           expect(receivedText).toEqual(TEST_VALUE);
-        }).catch((err) => console.error(err));
+          done();
+        });
       });
     });
   });
+
+  test('should return 400 id invalid token and key provided', (done) => {
+    request(app).get('/invalid-token/invalid-key').then((response) => {
+      
+      expect(response.res.statusCode).toBe(400);
+      done();
+    });
+  });
 });
+
+function getTokenAndKeyFromUrl(responseUrl) {
+  return responseUrl.substring(config.url.length + 1 + config.port.toString().length);
+}

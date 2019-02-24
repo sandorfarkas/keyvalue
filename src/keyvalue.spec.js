@@ -11,17 +11,9 @@ const mockToken = () => {
 		}
 	}
 }
-let mockStore = () => {
-  return {
-		add() {
-		},
-		contains() {
-			return true;
-		}
-	}
-}
-let store = mockStore();
-let keyvalue = Keyvalue(mockToken, store);
+let mockStore;
+let store;
+let keyvalue;
 
 beforeAll(() => {
 	createInvalidKeys();
@@ -50,7 +42,8 @@ describe('Create new', () => {
 
 	test('should return empty object when key is invalid', () => {
 		INVALID_KEYS.forEach((key) => {
-			let response = keyvalue.createNew(key);
+			const response = keyvalue.createNew(key);
+			
 			expect(response).toEqual({});
 		});
 	});
@@ -132,6 +125,13 @@ describe('Save entry', () => {
 		expect(storeAddSpy.callCount).toBe(1);
 		storeAddSpy.restore();
 	});
+
+	test('should return entry if it can be saved', () => {
+		const entry = { token: TEST_TOKEN, key: TEST_KEY, value: "test-value"};
+		const actualEntry = keyvalue.saveEntry(entry);
+		
+		expect(actualEntry).toBe(entry);
+	});
 });
 
 describe('Get entry', () => {
@@ -153,7 +153,7 @@ describe('Get entry', () => {
 		expect(keyvalue.getEntry({token: "token-not-in-db", key: "key-not-in-db"})).toEqual({});
 	})
 
-	test('should return value for token and key', () => {
+	test('should return entry for token and key', () => {
 		const entry = keyvalue.createNew("test-key");
 		entry.value = "test-value";
 		mockStore = () => {

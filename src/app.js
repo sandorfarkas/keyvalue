@@ -60,7 +60,7 @@ app.get('/:token/:key', (req, res) => {
   
   const response = keyvalue.getEntry({ token: token, key: key });
 
-  if (response == {}) {
+  if (response.value == undefined) {
     res.status(400).send();
   } else {
     res.status(200).send(response.value);
