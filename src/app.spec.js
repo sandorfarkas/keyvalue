@@ -1,6 +1,7 @@
-const request = require('supertest');
-const app = require('./app');
-const { config } = require('./config');
+const { config } = require("./config");
+config.mode = "test";
+const request = require("supertest");
+const app = require("./app");
 
 const TEST_KEY = "key-to-create";
 const TEST_TOKEN = "test-token";

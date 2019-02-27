@@ -3,10 +3,13 @@ const app = express();
 const { config } = require('./config');
 const bodyParser = require('body-parser')
 
+const fs = require('fs');
 const Token = require('./token');
 const Store = require('./store');
+const Io = require('./io');
+const io = Io();
 const Keyvalue = require('./keyvalue');
-const keyvalue = Keyvalue(Token, Store());
+const keyvalue = Keyvalue(Token, Store(fs, io));
 
 app.use(bodyParser.text({type: '*/*'}));
 

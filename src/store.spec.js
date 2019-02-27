@@ -1,5 +1,12 @@
+const { config } = require("./config");
+config.mode = "test";
+const sinon = require('sinon');
 const Store = require('./store');
-const store = Store();
+let mockFs;
+let mockIo;
+let fs;
+let io;
+let store;
 
 const TEST_ENTRY = {
   token: "test-token",
@@ -7,8 +14,59 @@ const TEST_ENTRY = {
   value: "test-value"
 }
 
-test('should have db map', () => {
-  expect(store.db).toBeInstanceOf(Map);
+beforeEach(() => {
+  mockFs = () => {
+    return {
+      existsSync() {
+        return true;
+      }
+    }
+  };
+  mockIo = () => {
+    return {
+      save() {
+      },
+      read() {
+      }
+    }
+  };
+  fs = mockFs();
+  io = mockIo();
+  store = Store(fs, io);
+});
+
+describe('db', () => {
+  test('should be empty map in test mode', () => {
+    expect(store.db).toBeInstanceOf(Map);
+  });
+
+  test('should be empty map in prod mode when store.db not exists', () => {
+    config.mode = "prod";
+    const mockFs = () => {
+      return {
+        existsSync() {
+          return false;
+        }
+      }
+    };
+    fs = mockFs();
+    store = Store(fs, io);
+
+    expect(store.db).toBeInstanceOf(Map);
+    expect(store.db.size).toBe(0);
+    config.mode = "test";
+  });
+
+  test('should load map in prod mode from store.db file when it exists', () => {
+    config.mode = "prod";
+    const ioReadSpy = sinon.spy(io, 'read');
+
+    store = Store(fs, io);
+
+    expect(ioReadSpy.callCount).toBe(1);
+    config.mode = "test";
+		ioReadSpy.restore();
+  });
 });
 
 describe('Add', () => {
@@ -23,6 +81,17 @@ describe('Add', () => {
     store.add(TEST_ENTRY);
   
     expect(store.getSize()).toBe(1);
+  });
+
+  test('should save the added entry to a file in prod mode', () => {
+    config.mode = "prod";
+    const ioReadSpy = sinon.spy(io, 'save');
+		
+    store.add(TEST_ENTRY);
+
+    expect(ioReadSpy.callCount).toBe(1);
+    config.mode = "test";
+		ioReadSpy.restore();
   });
 });
 

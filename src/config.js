@@ -1,6 +1,7 @@
 const config = {
   port: 8081,
-  url: "http://localhost"
+  url: "http://localhost",
+  mode: "prod"
 }
 
 module.exports = { config };
