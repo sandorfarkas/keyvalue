@@ -7,9 +7,9 @@ const fs = require('fs');
 const Token = require('./token');
 const Store = require('./store');
 const Io = require('./io');
-const io = Io();
+const io = Io(fs);
 const Keyvalue = require('./keyvalue');
-const keyvalue = Keyvalue(Token, Store(fs, io));
+const keyvalue = Keyvalue(Token, Store(io));
 
 app.use(bodyParser.text({type: '*/*'}));
 

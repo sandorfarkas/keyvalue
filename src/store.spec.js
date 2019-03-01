@@ -1,10 +1,8 @@
+const sinon = require('sinon');
 const { config } = require("./config");
 config.mode = "test";
-const sinon = require('sinon');
 const Store = require('./store');
-let mockFs;
 let mockIo;
-let fs;
 let io;
 let store;
 
@@ -15,24 +13,19 @@ const TEST_ENTRY = {
 }
 
 beforeEach(() => {
-  mockFs = () => {
-    return {
-      existsSync() {
-        return true;
-      }
-    }
-  };
   mockIo = () => {
     return {
       save() {
       },
       read() {
+      },
+      fileExists() {
+        return false;
       }
     }
   };
-  fs = mockFs();
   io = mockIo();
-  store = Store(fs, io);
+  store = Store(io);
 });
 
 describe('db', () => {
@@ -42,15 +35,8 @@ describe('db', () => {
 
   test('should be empty map in prod mode when store.db not exists', () => {
     config.mode = "prod";
-    const mockFs = () => {
-      return {
-        existsSync() {
-          return false;
-        }
-      }
-    };
-    fs = mockFs();
-    store = Store(fs, io);
+
+    store = Store(io);
 
     expect(store.db).toBeInstanceOf(Map);
     expect(store.db.size).toBe(0);
@@ -59,9 +45,19 @@ describe('db', () => {
 
   test('should load map in prod mode from store.db file when it exists', () => {
     config.mode = "prod";
+    mockIo = () => {
+      return {
+        read() {
+        },
+        fileExists() {
+          return true;
+        }
+      }
+    };
+    io = mockIo();
     const ioReadSpy = sinon.spy(io, 'read');
 
-    store = Store(fs, io);
+    store = Store(io);
 
     expect(ioReadSpy.callCount).toBe(1);
     config.mode = "test";

@@ -1,8 +1,8 @@
 const { config } = require("./config");
 
-function Store(fs, io) {
+function Store(io) {
   return {
-    db: init(fs, io),
+    db: init(io),
     add(entry) {
       this.db.set(`${entry.token}:${entry.key}`, entry);
       if (config.mode == "prod") {
@@ -22,8 +22,8 @@ function Store(fs, io) {
   }
 }
 
-function init(fs, io) {
-  if (fs.existsSync("store.db") && config.mode != "test") {
+function init(io) {
+  if (io.fileExists("store.db") && config.mode != "test") {
     return io.read();
   } else {
     return new Map();
