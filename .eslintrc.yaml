@@ -1,0 +1,49 @@
+---
+plugins:
+- node
+extends:
+- eslint:recommended
+- plugin:node/recommended
+rules:
+  node/exports-style:
+  - error
+  - module.exports
+  semi:
+  - error
+  - always
+  brace-style:
+  - warn
+  - stroustrup
+  - allowSingleLine: true
+  indent:
+  - warn
+  - 2
+  - MemberExpression: 2
+    CallExpression:
+      arguments: 2
+  max-len:
+  - warn
+  - 140
+  - 2
+  - ignoreComments: true
+  no-unused-vars: warn
+  object-curly-spacing:
+  - warn
+  - never
+  operator-linebreak:
+  - warn
+  - after
+  prefer-const: warn
+  space-before-function-paren:
+  - warn
+  - anonymous: never
+    asyncArrow: always
+    named: never
+  quotes:
+  - warn
+  - single
+  - allowTemplateLiterals: true
+    avoidEscape: true
+  no-console: 'off'
+  no-path-concat: 'off'
+  node/no-unpublished-require: 'off'

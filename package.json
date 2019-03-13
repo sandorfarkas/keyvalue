@@ -4,8 +4,9 @@
   "description": "Keyvalue store",
   "private": true,
   "scripts": {
-    "start": "node src/server.js",
-    "test": "jest"
+    "start": "node lib/server.js",
+    "lint": "eslint lib",
+    "test": "npm run lint && jest"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,8 @@
     "express": "^4.16.4"
   },
   "devDependencies": {
+    "eslint": "^5.15.1",
+    "eslint-plugin-node": "^8.0.1",
     "jest": "^24.1.0",
     "sinon": "^7.2.3",
     "supertest": "^3.4.2"

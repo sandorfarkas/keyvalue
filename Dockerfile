@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:10-alpine
 
 WORKDIR /app
 
@@ -8,4 +8,4 @@ COPY ./src /app/src
 
 CMD npm start
 
-EXPOSE 8081
+EXPOSE 3102
