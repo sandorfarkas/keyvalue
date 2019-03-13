@@ -12,6 +12,9 @@
     "type": "git",
     "url": "git@git.topdesk.com:SandorF/keyvalue.git"
   },
+  "engines": {
+    "node": ">= 8.3"
+  },
   "author": "Sandor Farkas",
   "license": "ISC",
   "dependencies": {
