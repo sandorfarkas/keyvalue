@@ -29,7 +29,7 @@ rules:
   no-unused-vars: warn
   object-curly-spacing:
   - warn
-  - never
+  - always
   operator-linebreak:
   - warn
   - after
